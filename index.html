@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Interactive Flipbook - 1:1 Aspect Ratio</title>
+    <title>3D Interactive Flipbook</title>
     <style>
         :root {
             --primary-color: #4f46e5;
@@ -34,25 +34,25 @@
 
         header {
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         h1 {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 600;
             letter-spacing: 0.5px;
             color: #e2e8f0;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
-        /* Flipbook Container & 1:1 Strict Square Stage */
+        /* Flipbook Container & 3:4 Portrait Aspect Ratio Stage */
         .stage {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
             width: 100%;
-            max-width: 600px;
+            max-width: 500px;
             padding: 10px;
             perspective: 2000px;
         }
@@ -60,8 +60,8 @@
         .book-container {
             position: relative;
             width: 100%;
-            aspect-ratio: 1 / 1; /* Strictly 1:1 Square */
-            max-height: 70vh;
+            aspect-ratio: 3 / 4; /* Strictly 3:4 Portrait Ratio */
+            max-height: 75vh;
             background: #1e293b;
             border-radius: 12px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 
@@ -91,7 +91,7 @@
         .page img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Ensures images fit the 1:1 container seamlessly */
+            object-fit: cover; /* Fits images cleanly inside the 3:4 frame */
             display: block;
             pointer-events: none;
         }
@@ -244,7 +244,7 @@
 <body>
 
     <header>
-        <h1>Interactive 3D Flipbook (1:1 Ratio)</h1>
+        <h1>Interactive 3D Flipbook (3:4 Ratio)</h1>
     </header>
 
     <div class="stage">
@@ -286,7 +286,7 @@
     <script>
         // Image sources (Cover photo + 18 sequential pages)
         const imageUrls = [
-            "https://i.ibb.co/S4dLfHky/Gemini-Generated-Image-maklmpmaklmpmakl-1.png", // Cover (1:1)
+            "https://i.ibb.co/S4dLfHky/Gemini-Generated-Image-maklmpmaklmpmakl-1.png", // Cover
             "https://i.ibb.co/Y4SCRMhX/1.png",
             "https://i.ibb.co/7xjbff49/2.png",
             "https://i.ibb.co/Hfykd9wK/3.png",
