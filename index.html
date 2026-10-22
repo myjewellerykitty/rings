@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Interactive Flipbook</title>
+    <title>Realistic 3D Flipbook</title>
     <style>
         :root {
             --primary-color: #4f46e5;
@@ -45,32 +45,31 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
-        /* Flipbook Container & 3:4 Portrait Aspect Ratio Stage */
+        /* Stage with deep 3D perspective */
         .stage {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
             width: 100%;
-            max-width: 500px;
+            max-width: 480px;
             padding: 10px;
-            perspective: 2000px;
+            perspective: 3000px;
         }
 
         .book-container {
             position: relative;
             width: 100%;
-            aspect-ratio: 3 / 4; /* Strictly 3:4 Portrait Ratio */
-            max-height: 75vh;
+            aspect-ratio: 3 / 4; /* 3:4 Portrait Ratio */
+            max-height: 72vh;
             background: #1e293b;
-            border-radius: 12px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 
-                        0 0 0 1px rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.8), 
+                        0 0 0 1px rgba(255, 255, 255, 0.1);
+            transform-style: preserve-3d;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
-            transform-style: preserve-3d;
         }
 
         .page {
@@ -80,38 +79,38 @@
             top: 0;
             left: 0;
             transform-origin: left center;
-            transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
+            transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
             transform-style: preserve-3d;
             cursor: pointer;
             user-select: none;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+            border-radius: 4px;
+            overflow: hidden;
             background: #111827;
         }
 
         .page img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Fits images cleanly inside the 3:4 frame */
+            object-fit: cover;
             display: block;
             pointer-events: none;
         }
 
-        /* Book spine shadow effect */
-        .page::before {
+        /* Realistic Page Curl Shadow & Lighting */
+        .page::after {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            width: 30px;
+            width: 100%;
             height: 100%;
-            background: linear-gradient(to right, rgba(0,0,0,0.4), transparent);
-            z-index: 2;
-            pointer-events: none;
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 15%);
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: opacity 0.5s;
+            pointer-events: none;
         }
 
-        .page.flipped::before {
+        .page.flipped::after {
             opacity: 1;
         }
 
@@ -244,7 +243,7 @@
 <body>
 
     <header>
-        <h1>Interactive 3D Flipbook (3:4 Ratio)</h1>
+        <h1> 3D Book</h1>
     </header>
 
     <div class="stage">
@@ -284,7 +283,6 @@
     </div>
 
     <script>
-        // Image sources (Cover photo + 18 sequential pages)
         const imageUrls = [
             "https://i.ibb.co/S4dLfHky/Gemini-Generated-Image-maklmpmaklmpmakl-1.png", // Cover
             "https://i.ibb.co/Y4SCRMhX/1.png",
@@ -308,7 +306,7 @@
         ];
 
         const totalPages = imageUrls.length;
-        let currentPage = 0; // 0-indexed (0 = Cover)
+        let currentPage = 0;
         let isPlaying = true;
         let autoPlayInterval = null;
         let speed = 2500;
@@ -321,7 +319,6 @@
 
         let pageElements = [];
 
-        // Preload images and build pages
         function initBook() {
             let loadedCount = 0;
 
@@ -337,7 +334,7 @@
                 };
             });
 
-            // Create DOM elements in reverse order so z-index layers correctly
+            // Build pages in reverse order for correct stacking
             for (let i = totalPages - 1; i >= 0; i--) {
                 const page = document.createElement('div');
                 page.className = 'page';
@@ -351,7 +348,6 @@
                 bookContainer.appendChild(page);
                 pageElements[i] = page;
 
-                // Click to turn forward
                 page.addEventListener('click', () => {
                     if (i === currentPage) {
                         nextPage();
@@ -368,10 +364,10 @@
             pageElements.forEach((page, index) => {
                 if (index < currentPage) {
                     page.classList.add('flipped');
-                    page.style.zIndex = index;
+                    page.style.zIndex = index; // Lower stack order when flipped to the left
                 } else {
                     page.classList.remove('flipped');
-                    page.style.zIndex = totalPages - index;
+                    page.style.zIndex = totalPages - index; // Higher stack order on the right
                 }
             });
             pageIndicator.textContent = `Page ${currentPage + 1} / ${totalPages}`;
@@ -381,8 +377,7 @@
             if (currentPage < totalPages - 1) {
                 currentPage++;
             } else {
-                // Loop back to start smoothly
-                currentPage = 0;
+                currentPage = 0; // Loop back to cover smoothly
             }
             updateBookState();
         }
@@ -419,7 +414,6 @@
             }
         }
 
-        // Event Listeners for Controls
         document.getElementById('nextBtn').addEventListener('click', () => {
             nextPage();
             resetAutoPlay();
@@ -456,7 +450,6 @@
             startAutoPlay();
         });
 
-        // Keyboard Navigation
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight') {
                 nextPage();
@@ -470,7 +463,6 @@
             }
         });
 
-        // Initialize on load
         window.addEventListener('DOMContentLoaded', initBook);
     </script>
 </body>
